@@ -10,7 +10,7 @@ import { Pyramid, Castle, Gem, Shield, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import dragonEgg from "@/assets/dragon-egg.png";
 import playiqLogoLight from "@/assets/playiq-logo-light.png";
-import playiqToySet from "@/assets/playiq-toy-set.png";
+import playiqToySetHome from "@/assets/playiq-toy-set-home.png";
 
 const AMAZON_LINK = "https://www.amazon.com/dp/B0F3LV725Z";
 
@@ -41,7 +41,7 @@ const Home = () => {
                 {/* Product Image - Clickable */}
                 <Link to="/product" className="relative flex-shrink-0 animate-float -ml-4 hover:scale-105 transition-transform" style={{ animationDelay: '0.3s' }}>
                   <img 
-                    src={playiqToySet} 
+                    src={playiqToySetHome} 
                     alt="PlayIQ Magnetic Building Blocks" 
                     className="w-36 h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 object-contain drop-shadow-[0_0_40px_hsl(185,100%,50%,0.5)]"
                   />
