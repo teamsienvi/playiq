@@ -1,5 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { User, LogOut } from "lucide-react";
 
 interface NavItem {
   label: string;
@@ -19,6 +21,13 @@ const navItems: NavItem[] = [
 
 export function HUDNav() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/home");
+  };
 
   return (
     <nav className="relative z-50 flex justify-center">
@@ -62,6 +71,49 @@ export function HUDNav() {
                 </li>
               );
             })}
+            
+            {/* Divider */}
+            <li className="w-px h-4 bg-primary/30 mx-2" />
+            
+            {/* Auth Section */}
+            {user ? (
+              <>
+                <li>
+                  <Link
+                    to="/dashboard"
+                    className={cn(
+                      "relative px-4 py-2 text-xs font-bold tracking-wider transition-all duration-300 flex items-center gap-2",
+                      "hover:text-primary",
+                      location.pathname.startsWith("/dashboard")
+                        ? "text-primary drop-shadow-[0_0_8px_hsl(var(--primary))]" 
+                        : "text-foreground/70"
+                    )}
+                  >
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                      <User className="w-3 h-3 text-primary" />
+                    </div>
+                    DASHBOARD
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={handleSignOut}
+                    className="relative px-3 py-2 text-xs font-bold tracking-wider transition-all duration-300 flex items-center gap-1 text-foreground/70 hover:text-destructive"
+                  >
+                    <LogOut className="w-3 h-3" />
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li>
+                <Link
+                  to="/auth"
+                  className="relative px-4 py-1.5 text-xs font-bold tracking-wider transition-all duration-300 block bg-primary text-primary-foreground rounded-full hover:bg-primary/90"
+                >
+                  SIGN UP
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>
