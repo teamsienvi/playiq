@@ -8,7 +8,7 @@ import {
 } from "@/components/hud";
 import { Pyramid, Castle, Gem, Shield } from "lucide-react";
 import dragonEgg from "@/assets/dragon-egg.png";
-import playiqLogo from "@/assets/playiq-logo.png";
+import playiqLogoLight from "@/assets/playiq-logo-light.png";
 
 const Home = () => {
   return (
@@ -21,52 +21,49 @@ const Home = () => {
 
         {/* Main Content */}
         <main className="flex-1 container mx-auto px-4 py-6">
-          {/* Top Section: Logo/Crystal Left + Hero Panel Right */}
-          <div className="grid lg:grid-cols-12 gap-6 items-start mb-8">
-            {/* Left: PlayIQ Logo - floats directly over nebula, NO container */}
-            <div className="lg:col-span-5 flex items-center justify-center">
-              <img 
-                src={playiqLogo} 
-                alt="PlayIQ" 
-                className="w-72 h-72 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] object-contain drop-shadow-[0_0_60px_hsl(185,100%,50%,0.6)] animate-float"
-              />
-            </div>
+          {/* Logo - Centered below nav */}
+          <div className="flex justify-center mb-8">
+            <img 
+              src={playiqLogoLight} 
+              alt="PlayIQ - Imagine. Build. Grow." 
+              className="w-80 md:w-96 lg:w-[28rem] object-contain drop-shadow-[0_0_40px_hsl(185,100%,50%,0.4)] animate-float"
+            />
+          </div>
 
-            {/* Right: Hero Panel with Dragon Egg */}
-            <div className="lg:col-span-7">
-              <HUDPanel variant="hero" className="relative h-full">
-                <div className="flex items-center gap-8 p-2">
-                  {/* Dragon Egg - positioned to overlap panel edge */}
-                  <div className="relative flex-shrink-0 animate-float -ml-8" style={{ animationDelay: '0.5s' }}>
-                    <img 
-                      src={dragonEgg} 
-                      alt="Dragon Egg" 
-                      className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 object-contain drop-shadow-[0_0_40px_hsl(300,85%,55%,0.5)]"
-                    />
-                    {/* Circular energy rings */}
-                    <div className="absolute inset-0 border-2 border-secondary/30 rounded-full animate-pulse-glow" />
-                    <div className="absolute inset-2 border border-primary/20 rounded-full" />
-                    {/* Glow platform */}
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-32 h-4 bg-secondary/30 blur-xl rounded-full" />
-                  </div>
-                  
-                  {/* Text Content */}
-                  <div className="flex-1 pr-4">
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-3">
-                      Your First
-                      <br />
-                      <span className="text-primary text-glow-primary">Character Awaits</span>
-                    </h2>
-                    <p className="text-sm md:text-base text-muted-foreground mb-6">
-                      Set in or hold dragon with your pulse and hoist/guide dragon egg.
-                    </p>
-                    <button className="relative px-8 py-3 rounded-lg bg-primary/20 border border-primary/60 text-primary font-bold tracking-wider uppercase transition-all duration-300 hover:bg-primary/30 hover:shadow-[0_0_30px_hsl(var(--primary)/0.5)] glow-primary">
-                      Start Now
-                    </button>
-                  </div>
+          {/* Hero Panel - Centered */}
+          <div className="flex justify-center mb-8">
+            <HUDPanel variant="hero" className="max-w-3xl w-full">
+              <div className="flex items-center gap-8 p-2">
+                {/* Dragon Egg */}
+                <div className="relative flex-shrink-0 animate-float -ml-4" style={{ animationDelay: '0.5s' }}>
+                  <img 
+                    src={dragonEgg} 
+                    alt="Dragon Egg" 
+                    className="w-36 h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 object-contain drop-shadow-[0_0_40px_hsl(300,85%,55%,0.5)]"
+                  />
+                  {/* Circular energy rings */}
+                  <div className="absolute inset-0 border-2 border-secondary/30 rounded-full animate-pulse-glow" />
+                  <div className="absolute inset-2 border border-primary/20 rounded-full" />
+                  {/* Glow platform */}
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-28 h-4 bg-secondary/30 blur-xl rounded-full" />
                 </div>
-              </HUDPanel>
-            </div>
+                
+                {/* Text Content */}
+                <div className="flex-1 pr-4">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-tight mb-3">
+                    Your First
+                    <br />
+                    <span className="text-primary text-glow-primary">Character Awaits</span>
+                  </h2>
+                  <p className="text-sm md:text-base text-muted-foreground mb-5">
+                    Set in or hold dragon with your pulse and hoist/guide dragon egg.
+                  </p>
+                  <button className="relative px-6 py-2.5 rounded-lg bg-primary/20 border border-primary/60 text-primary font-bold tracking-wider uppercase transition-all duration-300 hover:bg-primary/30 hover:shadow-[0_0_30px_hsl(var(--primary)/0.5)] glow-primary text-sm">
+                    Start Now
+                  </button>
+                </div>
+              </div>
+            </HUDPanel>
           </div>
 
           {/* Middle Section: Progress Panel + Hologram Icons */}
