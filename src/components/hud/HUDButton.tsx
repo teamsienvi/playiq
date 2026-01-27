@@ -1,22 +1,20 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ReactNode, ButtonHTMLAttributes } from "react";
 
-interface HUDButtonProps {
+export interface HUDButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   children: ReactNode;
-  onClick?: () => void;
   className?: string;
   variant?: "default" | "ghost" | "outline" | "glow";
   size?: "sm" | "md" | "lg";
-  disabled?: boolean;
 }
 
 export function HUDButton({
   children,
-  onClick,
   className,
   variant = "default",
   size = "md",
   disabled = false,
+  ...props
 }: HUDButtonProps) {
   const variantStyles = {
     default: cn(
@@ -59,8 +57,8 @@ export function HUDButton({
 
   return (
     <button
-      onClick={onClick}
       disabled={disabled}
+      {...props}
       className={cn(
         "relative overflow-hidden",
         "transition-all duration-300 transform",
