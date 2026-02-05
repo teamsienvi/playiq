@@ -1,8 +1,46 @@
+import { useState, useEffect } from "react";
 import { NebulaScene, HUDNav, HUDPanel } from "@/components/hud";
-import { ArrowLeft, Rocket, Bell } from "lucide-react";
+import { ArrowLeft, Calendar, Tag, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  featured_image_url: string | null;
+  seo_keywords: string[];
+  published_at: string | null;
+  created_at: string;
+}
 
 const Blog = () => {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const { data, error } = await supabase
+          .from("blog_posts")
+          .select("id, title, slug, excerpt, featured_image_url, seo_keywords, published_at, created_at")
+          .eq("status", "published")
+          .order("published_at", { ascending: false });
+
+        if (error) throw error;
+        setPosts(data || []);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPosts();
+  }, []);
+
   return (
     <NebulaScene>
       <div className="min-h-screen flex flex-col">
@@ -32,64 +70,76 @@ const Blog = () => {
             </p>
           </header>
 
-          {/* Coming Soon Panel */}
-          <section aria-label="Blog launch announcement">
-            <HUDPanel variant="hero" glowColor="primary" className="max-w-2xl mx-auto text-center">
-              <div className="space-y-6 py-8">
-                <div className="flex justify-center">
-                  <div className="relative">
-                    <Rocket className="w-16 h-16 text-primary animate-float" />
-                    <div className="absolute -inset-4 bg-primary/20 rounded-full blur-xl" />
-                  </div>
-                </div>
-                
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                  Launching Soon!
-                </h2>
-                
-                <p className="text-muted-foreground leading-relaxed">
-                  We're preparing exciting content about STEM education, creative building projects, 
-                  and the science behind magnetic construction. Our blog will feature hands-on activities, 
-                  learning guides, and inspiration for young builders.
-                </p>
-
-                <div className="flex items-center justify-center gap-2 text-primary">
-                  <Bell className="w-5 h-5" />
-                  <span className="font-medium">Check back soon for updates!</span>
-                </div>
-              </div>
-            </HUDPanel>
-          </section>
-
-          {/* Upcoming Topics Preview */}
-          <section aria-label="Upcoming blog topics" className="mt-12">
-            <h2 className="text-xl font-bold text-foreground text-center mb-6">
-              Coming <span className="text-secondary">Topics</span>
-            </h2>
-            
-            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <HUDPanel variant="small" glowColor="secondary">
-                <h3 className="font-bold text-foreground mb-2">STEM Learning Guides</h3>
-                <p className="text-sm text-muted-foreground">
-                  Age-appropriate activities that teach physics, geometry, and engineering concepts
-                </p>
-              </HUDPanel>
-              
-              <HUDPanel variant="small" glowColor="primary">
-                <h3 className="font-bold text-foreground mb-2">Build Challenges</h3>
-                <p className="text-sm text-muted-foreground">
-                  Step-by-step projects from simple structures to complex space stations
-                </p>
-              </HUDPanel>
-              
-              <HUDPanel variant="small" glowColor="accent">
-                <h3 className="font-bold text-foreground mb-2">Parent Resources</h3>
-                <p className="text-sm text-muted-foreground">
-                  Tips for screen-free play and maximizing educational value
-                </p>
-              </HUDPanel>
+          {/* Blog Posts Grid */}
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
-          </section>
+          ) : posts.length === 0 ? (
+            <section aria-label="Blog launch announcement">
+              <HUDPanel variant="hero" glowColor="primary" className="max-w-2xl mx-auto text-center">
+                <div className="space-y-6 py-8">
+                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                    Coming Soon!
+                  </h2>
+                  <p className="text-muted-foreground leading-relaxed">
+                    We're preparing exciting content about STEM education, creative building projects, 
+                    and the science behind magnetic construction. Check back soon for updates!
+                  </p>
+                </div>
+              </HUDPanel>
+            </section>
+          ) : (
+            <section aria-label="Blog posts" className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {posts.map((post) => (
+                <Link key={post.id} to={`/blog/${post.slug}`}>
+                  <HUDPanel 
+                    variant="default" 
+                    glowColor="primary" 
+                    className="h-full transition-transform hover:scale-[1.02]"
+                  >
+                    {post.featured_image_url && (
+                      <div className="aspect-video mb-4 rounded-lg overflow-hidden bg-background/50">
+                        <img 
+                          src={post.featured_image_url} 
+                          alt={post.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    <h2 className="text-lg font-bold text-foreground mb-2 line-clamp-2">
+                      {post.title}
+                    </h2>
+                    
+                    {post.excerpt && (
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                        {post.excerpt}
+                      </p>
+                    )}
+                    
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                      <Calendar className="w-3 h-3" />
+                      <span>
+                        {new Date(post.published_at || post.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    
+                    {post.seo_keywords && post.seo_keywords.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {post.seo_keywords.slice(0, 3).map((keyword, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs">
+                            <Tag className="w-2 h-2 mr-1" />
+                            {keyword}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </HUDPanel>
+                </Link>
+              ))}
+            </section>
+          )}
         </main>
 
         {/* Footer spacer */}

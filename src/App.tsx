@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DevOverlay } from "@/components/dev/DevOverlay";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AdminRoute } from "@/components/admin/AdminRoute";
 
 // Pages
 import Home from "./pages/Home";
@@ -22,6 +23,7 @@ import Redeem from "./pages/Redeem";
 import Profile from "./pages/Profile";
 import Product from "./pages/Product";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
@@ -33,6 +35,12 @@ import Arcade from "./pages/dashboard/Arcade";
 import Assessments from "./pages/dashboard/Assessments";
 import Resources from "./pages/dashboard/Resources";
 import Community from "./pages/dashboard/Community";
+
+// Admin pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import BlogManager from "./pages/admin/BlogManager";
+import FAQManager from "./pages/admin/FAQManager";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +88,28 @@ const App = () => (
               <Route path="community" element={<Community />} />
             </Route>
             
+            {/* Admin routes (admin role required) */}
+            <Route path="/admin" element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            } />
+            <Route path="/admin/blog" element={
+              <AdminRoute>
+                <BlogManager />
+              </AdminRoute>
+            } />
+            <Route path="/admin/faq" element={
+              <AdminRoute>
+                <FAQManager />
+              </AdminRoute>
+            } />
+            <Route path="/admin/settings" element={
+              <AdminRoute>
+                <AdminSettings />
+              </AdminRoute>
+            } />
+            
             {/* Blocks redeem */}
             <Route path="/redeem" element={<Redeem />} />
             
@@ -91,6 +121,7 @@ const App = () => (
             
             {/* Blog, FAQ, Contact */}
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/contact" element={<Contact />} />
             
