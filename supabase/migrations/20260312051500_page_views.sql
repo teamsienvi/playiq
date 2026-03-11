@@ -32,4 +32,4 @@ CREATE POLICY "Allow admin select on page_views"
   ON public.page_views
   FOR SELECT
   TO authenticated
-  USING (public.has_role('admin', auth.uid()));
+  USING (public.has_role(auth.uid(), 'admin'));
