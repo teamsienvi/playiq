@@ -73,7 +73,7 @@ export function RouteAnalyticsTracker() {
             user_id: user?.id ?? null,
         };
 
-        // Fire-and-forget insert
+        // Fire-and-forget insert (local PlayIQ analytics)
         supabase
             .from("page_views")
             .insert(record)
@@ -82,6 +82,36 @@ export function RouteAnalyticsTracker() {
                     console.warn("[Analytics] Failed to track page view:", error.message);
                 }
             });
+
+        // Also send to Sienvi Agency dashboard analytics
+        try {
+            let visitorId = localStorage.getItem("playiq_visitor_id");
+            if (!visitorId) {
+                visitorId = crypto.randomUUID();
+                localStorage.setItem("playiq_visitor_id", visitorId);
+            }
+            const params = new URLSearchParams(window.location.search);
+            const AGENCY_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1odXhybnhhanRpd3hhdWhsaGx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NTM3MDcsImV4cCI6MjA4NzUyOTcwN30.aWETGhjGNrihD6OrKq-tctQnDFxu8XCjgsFmv77-m9E";
+            fetch("https://mhuxrnxajtiwxauhlhlv.supabase.co/functions/v1/track-analytics", {
+                method: "POST",
+                credentials: "omit",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${AGENCY_ANON_KEY}`,
+                    "apikey": AGENCY_ANON_KEY,
+                },
+                body: JSON.stringify({
+                    clientId: "22090989-2d0e-47b2-b9c5-98652d7f0957",
+                    visitorId,
+                    pageUrl: window.location.href,
+                    pageTitle: document.title,
+                    referrer: document.referrer || "",
+                    utmSource: params.get("utm_source") || undefined,
+                    utmMedium: params.get("utm_medium") || undefined,
+                    utmCampaign: params.get("utm_campaign") || undefined,
+                }),
+            }).catch(() => { /* fail silently */ });
+        } catch { /* fail silently */ }
     }, [location.pathname, user?.id]);
 
     return null;
