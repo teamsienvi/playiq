@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { isTrackingExcluded } from "@/lib/trackingExclusion";
 
 /** Routes to exclude from analytics tracking */
 const EXCLUDED_PREFIXES = ["/admin", "/auth"];
@@ -45,8 +46,8 @@ export function RouteAnalyticsTracker() {
     useEffect(() => {
         const { pathname } = location;
 
-        // Skip excluded routes
-        if (EXCLUDED_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+        // Skip excluded routes and internal team traffic
+        if (EXCLUDED_PREFIXES.some((prefix) => pathname.startsWith(prefix)) || isTrackingExcluded()) {
             return;
         }
 
